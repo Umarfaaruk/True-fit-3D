@@ -242,6 +242,22 @@ export default function ProductDetail({
             </button>
           </div>
 
+          <a
+            href="#try-on"
+            onClick={(e) => {
+              e.preventDefault();
+              document.getElementById("try-on")?.scrollIntoView({ behavior: "smooth", block: "start" });
+            }}
+            className="mt-4 flex items-center justify-center gap-2.5 rounded-full border border-brass/50 bg-brass/5 px-5 py-3 text-sm text-brass transition-colors hover:bg-brass/10"
+          >
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
+              <rect x="3" y="6" width="18" height="14" rx="2.5" />
+              <circle cx="12" cy="13" r="3.4" />
+              <path d="M8.5 6l1.2-2h4.6L15.5 6" strokeLinejoin="round" />
+            </svg>
+            See it on your photo
+          </a>
+
           {added && (
             <p className="mt-3 text-xs text-sage" role="status">
               Added — <Link href="/cart" className="underline underline-offset-4">view your bag</Link>.
@@ -257,7 +273,7 @@ export default function ProductDetail({
       </div>
 
       {/* Try-on */}
-      <section className="mt-16">
+      <section id="try-on" className="mt-16 scroll-mt-24">
         <TryOnPanel product={product} />
       </section>
 

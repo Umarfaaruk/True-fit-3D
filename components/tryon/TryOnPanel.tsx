@@ -103,17 +103,40 @@ export default function TryOnPanel({ product }: { product: Product | null }) {
 
   if (!apiKey || showKeyForm) {
     return (
-      <div className="rounded-xl border border-line bg-surface p-6">
+      <div className="rounded-xl border border-brass/40 bg-surface p-6">
         <p className="label">Photo try-on</p>
-        <h3 className="mt-2 font-serif text-xl text-ink">Use your own Gemini key</h3>
-        <p className="mt-2 max-w-md text-sm leading-relaxed text-muted">
-          Try-on calls Google&apos;s Gemini image model directly. Image generation is a paid Google
-          feature, so the key is yours and the cost is yours — it is stored only in this browser and
-          never on our servers.
+        <h3 className="mt-2 font-serif text-2xl text-ink">
+          See {product ? product.name : "this piece"} on you
+        </h3>
+        <p className="mt-2 max-w-lg text-sm leading-relaxed text-muted">
+          Upload a photo of yourself and we will composite this garment onto it, keeping your face,
+          pose and background as they are.
         </p>
 
-        <div className="mt-4 flex flex-wrap gap-2">
+        <ol className="mt-6 grid gap-4 sm:grid-cols-3">
+          {[
+            { n: "1", t: "Add your Gemini key", d: "One time, saved in this browser only." },
+            { n: "2", t: "Upload a photo", d: "Front-facing and evenly lit works best." },
+            { n: "3", t: "See the result", d: "Usually just a few seconds." },
+          ].map((s) => (
+            <li key={s.n} className="flex gap-3">
+              <span className="grid h-7 w-7 shrink-0 place-items-center rounded-full border border-brass/50 text-xs text-brass">
+                {s.n}
+              </span>
+              <span>
+                <span className="block text-sm text-ink">{s.t}</span>
+                <span className="mt-0.5 block text-xs leading-relaxed text-faint">{s.d}</span>
+              </span>
+            </li>
+          ))}
+        </ol>
+
+        <div className="mt-6 flex flex-wrap gap-2 border-t border-line pt-6">
+          <label className="sr-only" htmlFor="gemini-key">
+            Gemini API key
+          </label>
           <input
+            id="gemini-key"
             type="password"
             value={keyInput}
             onChange={(e) => setKeyInput(e.target.value)}
@@ -122,7 +145,7 @@ export default function TryOnPanel({ product }: { product: Product | null }) {
             autoComplete="off"
           />
           <button type="button" onClick={handleSaveKey} className="btn-primary px-5 py-2.5">
-            Save key
+            Start try-on
           </button>
           <a
             href="https://aistudio.google.com/apikey"
@@ -130,9 +153,14 @@ export default function TryOnPanel({ product }: { product: Product | null }) {
             rel="noreferrer noopener"
             className="btn-secondary px-5 py-2.5"
           >
-            Get a key
+            Get a free key
           </a>
         </div>
+
+        <p className="mt-3 max-w-lg text-xs leading-relaxed text-faint">
+          Image generation is a paid Google feature, so try-on runs on your key and bills to you.
+          The key never reaches our servers — it is passed straight through to Google per request.
+        </p>
 
         {apiKey && (
           <button
