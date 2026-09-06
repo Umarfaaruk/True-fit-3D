@@ -6,10 +6,12 @@ import { money } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import ProductPhoto from "./ProductPhoto";
 import Rating from "./Rating";
+import HangerIcon from "./HangerIcon";
 
 export default function ProductCard({ product }: { product: Product }) {
-  const { isWished, toggleWish, hydrated } = useStore();
+  const { isWished, toggleWish, hydrated, wearProduct, wornProductId } = useStore();
   const wished = hydrated && isWished(product.id);
+  const isWorn = hydrated && wornProductId === product.id;
   const onSale = product.salePrice !== undefined;
 
   return (
@@ -62,22 +64,36 @@ export default function ProductCard({ product }: { product: Product }) {
         </div>
       </Link>
 
-      <button
-        type="button"
-        onClick={() => toggleWish(product.id)}
-        aria-label={wished ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}
-        aria-pressed={wished}
-        className="absolute right-3 top-3 grid h-9 w-9 place-items-center rounded-full border border-line bg-surface/90 backdrop-blur transition-colors hover:border-brass"
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
-          <path
-            d="M12 20.5l-1.4-1.28C5.72 14.8 3 12.36 3 9.28 3 6.8 4.98 5 7.4 5c1.4 0 2.76.63 3.6 1.7C11.84 5.63 13.2 5 14.6 5 17.02 5 19 6.8 19 9.28c0 3.08-2.72 5.52-7.6 9.94z"
-            fill={wished ? "rgb(var(--brass))" : "none"}
-            stroke={wished ? "rgb(var(--brass))" : "rgb(var(--muted))"}
-            strokeWidth="1.7"
-          />
-        </svg>
-      </button>
+      <div className="absolute right-3 top-3 flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() => toggleWish(product.id)}
+          aria-label={wished ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}
+          aria-pressed={wished}
+          className="grid h-9 w-9 place-items-center rounded-full border border-line bg-surface/90 backdrop-blur transition-colors hover:border-brass"
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M12 20.5l-1.4-1.28C5.72 14.8 3 12.36 3 9.28 3 6.8 4.98 5 7.4 5c1.4 0 2.76.63 3.6 1.7C11.84 5.63 13.2 5 14.6 5 17.02 5 19 6.8 19 9.28c0 3.08-2.72 5.52-7.6 9.94z"
+              fill={wished ? "rgb(var(--brass))" : "none"}
+              stroke={wished ? "rgb(var(--brass))" : "rgb(var(--muted))"}
+              strokeWidth="1.7"
+            />
+          </svg>
+        </button>
+
+        <button
+          type="button"
+          onClick={() => wearProduct(product.id)}
+          aria-label={`Wear ${product.name} in the fitting room`}
+          title="Try it on"
+          className={`grid h-9 w-9 place-items-center rounded-full border bg-surface/90 backdrop-blur transition-colors hover:border-brass ${
+            isWorn ? "border-brass text-brass" : "border-line text-muted"
+          }`}
+        >
+          <HangerIcon />
+        </button>
+      </div>
     </div>
   );
 }

@@ -3,6 +3,9 @@ import "./globals.css";
 import { StoreProvider } from "@/lib/store";
 import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
+import CommandPalette from "@/components/site/CommandPalette";
+import FittingRoomDrawer from "@/components/fitting/FittingRoomDrawer";
+import FittingRoomButton from "@/components/fitting/FittingRoomButton";
 
 export const metadata: Metadata = {
   title: "TrueFit3D — Premium Menswear, Measured to You",
@@ -45,6 +48,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <Header />
           <main id="main">{children}</main>
           <Footer />
+          <FittingRoomButton />
+          <FittingRoomDrawer />
+          <CommandPalette />
         </StoreProvider>
       </body>
     </html>

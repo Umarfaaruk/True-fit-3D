@@ -31,6 +31,8 @@ export interface Product {
   rating: number;
   reviews: Review[];
   badge?: string;
+  /** Units on hand; drives the low-stock notice. */
+  stock: number;
   /**
    * Populate with a real product photo URL to get full-quality Gemini try-on
    * results. Without one, try-on falls back to a text description of the
@@ -84,6 +86,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1619603364904-c0498317e145?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Model wearing a camel double-breasted overcoat against a neutral backdrop",
+    stock: 6,
   },
   {
     id: "puffer",
@@ -107,6 +110,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1706765779494-2705542ebe74?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Quilted puffer jacket hanging in a store window",
+    stock: 3,
   },
   {
     id: "biker",
@@ -128,6 +132,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1521223890158-f9f7c3d5d504?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Close-up of a black leather biker jacket with asymmetric zips",
+    stock: 9,
   },
   {
     id: "bomber",
@@ -149,6 +154,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Bomber jacket held on a hanger against a plain wall",
+    stock: 24,
   },
   {
     id: "trucker",
@@ -170,6 +176,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1611312449408-fcece27cdbb7?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Blue denim trucker jacket photographed flat",
+    stock: 15,
   },
   {
     id: "oxford",
@@ -191,6 +198,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1602810316693-3667c854239a?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Blue oxford button-down shirt laid on a white table",
+    stock: 41,
   },
   {
     id: "tee",
@@ -212,6 +220,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Plain white crew-neck t-shirt on a light background",
+    stock: 68,
   },
   {
     id: "knit",
@@ -233,6 +242,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1611312449297-a69dc9c3987b?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Charcoal knit sweater on a white clothes hanger",
+    stock: 11,
   },
   {
     id: "hoodie",
@@ -254,6 +264,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1620799140188-3b2a02fd9a77?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Fleece hoodie styled flat beside a pair of jeans",
+    stock: 33,
   },
   {
     id: "turtleneck",
@@ -274,6 +285,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1605980776566-0486c3ac7617?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Studio portrait of a model in a black turtleneck",
+    stock: 7,
   },
   {
     id: "trousers",
@@ -295,6 +307,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1694447814836-c93ab70f7398?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Tailored dark trousers with a belt on a mannequin",
+    stock: 19,
   },
   {
     id: "jeans",
@@ -316,6 +329,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1714143136372-ddaf8b606da7?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Pair of blue selvedge jeans on a white background",
+    stock: 28,
   },
   {
     id: "cargo",
@@ -336,6 +350,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1548883354-7622d03aca27?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Dark cargo trousers showing the bellowed thigh pockets",
+    stock: 4,
   },
   {
     id: "chino-shorts",
@@ -356,6 +371,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1629185752193-0d25bb978c04?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Model wearing beige chino shorts outdoors",
+    stock: 52,
   },
   {
     id: "chelsea",
@@ -378,6 +394,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1534233812932-59b8fa1b780c?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Pair of black leather Chelsea boots on a wooden surface",
+    stock: 8,
   },
   {
     id: "sneakers",
@@ -399,6 +416,7 @@ export const products: Product[] = [
     imageUrl:
       "https://images.unsplash.com/photo-1544441892-794166f1e3be?auto=format&fit=crop&w=900&q=80",
     imageAlt: "Pair of white low-top leather sneakers",
+    stock: 37,
   },
 ];
 
@@ -441,3 +459,10 @@ export function relatedProducts(p: Product, limit = 4): Product[] {
 
 /** Back-compat export — the fitting room imports `garments`. */
 export const garments = products;
+
+/** Below this, the product page nudges the shopper. */
+export const LOW_STOCK_THRESHOLD = 12;
+
+export function isLowStock(p: Product): boolean {
+  return p.stock > 0 && p.stock <= LOW_STOCK_THRESHOLD;
+}

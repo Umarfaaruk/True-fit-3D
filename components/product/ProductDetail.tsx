@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
-import { activePrice, type Product } from "@/lib/products";
+import { activePrice, isLowStock, type Product } from "@/lib/products";
 import { money, shortDate } from "@/lib/format";
 import { useStore } from "@/lib/store";
 import { useMeasurements } from "@/lib/useMeasurements";
@@ -11,7 +12,8 @@ import ProductImage from "./ProductImage";
 import ProductPhoto from "./ProductPhoto";
 import ProductCard from "./ProductCard";
 import Rating from "./Rating";
-import TryOnPanel from "@/components/tryon/TryOnPanel";
+import HangerIcon from "./HangerIcon";
+import ShareRow from "./ShareRow";
 
 export default function ProductDetail({
   product,
@@ -20,7 +22,8 @@ export default function ProductDetail({
   product: Product;
   related: Product[];
 }) {
-  const { addToCart, isWished, toggleWish, hydrated } = useStore();
+  const router = useRouter();
+  const { addToCart, isWished, toggleWish, hydrated, wearProduct } = useStore();
   const { measurements, saved } = useMeasurements();
 
   const [color, setColor] = useState(product.colors[0]);
@@ -28,20 +31,33 @@ export default function ProductDetail({
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const [sizeError, setSizeError] = useState(false);
+  const [tab, setTab] = useState<"description" | "reviews">("description");
 
   const advice = useMemo(() => recommendSize(product, measurements), [product, measurements]);
   const onSale = product.salePrice !== undefined;
   const wished = hydrated && isWished(product.id);
+  const lowStock = isLowStock(product);
 
-  function handleAdd() {
+  /** Returns false (and flags the error) when no size is chosen yet. */
+  function commit(): boolean {
     if (!size) {
       setSizeError(true);
-      return;
+      return false;
     }
     addToCart({ productId: product.id, size, color: color.name, qty });
-    setAdded(true);
     setSizeError(false);
+    return true;
+  }
+
+  function handleAdd() {
+    if (!commit()) return;
+    setAdded(true);
     window.setTimeout(() => setAdded(false), 2200);
+  }
+
+  function handleBuyNow() {
+    if (!commit()) return;
+    router.push("/checkout");
   }
 
   return (
@@ -72,6 +88,15 @@ export default function ProductDetail({
               sizes="(min-width: 1024px) 45vw, 100vw"
               priority
             />
+            <button
+              type="button"
+              onClick={() => wearProduct(product.id)}
+              aria-label={`Wear ${product.name} in the fitting room`}
+              title="Try it on"
+              className="absolute right-3 top-3 grid h-10 w-10 place-items-center rounded-full border border-line bg-surface/90 text-muted backdrop-blur transition-colors hover:border-brass hover:text-brass"
+            >
+              <HangerIcon size={18} />
+            </button>
           </div>
 
           {/* Without photography, the tinted silhouette previews each colourway. */}
@@ -102,7 +127,7 @@ export default function ProductDetail({
             {product.name}
           </h1>
 
-          <div className="mt-3 flex items-center gap-3">
+          <div className="mt-3">
             <Rating value={product.rating} count={product.reviews.length} size="md" />
           </div>
 
@@ -116,8 +141,7 @@ export default function ProductDetail({
               <span className="font-medium text-ink">{money(product.price)}</span>
             )}
           </p>
-
-          <p className="mt-5 text-sm leading-relaxed text-muted">{product.description}</p>
+          <p className="mt-1 text-xs text-faint">Inclusive of all taxes</p>
 
           {/* Colour */}
           <div className="mt-8">
@@ -204,8 +228,16 @@ export default function ProductDetail({
             </div>
           </div>
 
+          {/* Stock */}
+          {lowStock && (
+            <p className="mt-5 flex items-center gap-2 text-xs text-danger">
+              <span className="h-1.5 w-1.5 rounded-full bg-danger" />
+              Only {product.stock} left — do not miss it
+            </p>
+          )}
+
           {/* Quantity + actions */}
-          <div className="mt-7 flex flex-wrap items-center gap-3">
+          <div className="mt-5 flex flex-wrap items-center gap-3">
             <div className="flex items-center rounded-full border border-line">
               <button
                 type="button"
@@ -228,7 +260,7 @@ export default function ProductDetail({
               </button>
             </div>
 
-            <button type="button" onClick={handleAdd} className="btn-primary flex-1 sm:flex-none">
+            <button type="button" onClick={handleAdd} className="btn-secondary flex-1 sm:flex-none">
               {added ? "Added to bag ✓" : "Add to bag"}
             </button>
 
@@ -242,21 +274,18 @@ export default function ProductDetail({
             </button>
           </div>
 
-          <a
-            href="#try-on"
-            onClick={(e) => {
-              e.preventDefault();
-              document.getElementById("try-on")?.scrollIntoView({ behavior: "smooth", block: "start" });
-            }}
-            className="mt-4 flex items-center justify-center gap-2.5 rounded-full border border-brass/50 bg-brass/5 px-5 py-3 text-sm text-brass transition-colors hover:bg-brass/10"
+          <button type="button" onClick={handleBuyNow} className="btn-primary mt-3 w-full">
+            Buy now
+          </button>
+
+          <button
+            type="button"
+            onClick={() => wearProduct(product.id)}
+            className="mt-3 flex w-full items-center justify-center gap-2.5 rounded-full border border-brass/50 bg-brass/5 px-5 py-3 text-sm text-brass transition-colors hover:bg-brass/10"
           >
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true">
-              <rect x="3" y="6" width="18" height="14" rx="2.5" />
-              <circle cx="12" cy="13" r="3.4" />
-              <path d="M8.5 6l1.2-2h4.6L15.5 6" strokeLinejoin="round" />
-            </svg>
-            See it on your photo
-          </a>
+            <HangerIcon size={17} />
+            Try it on in the Fitting Room
+          </button>
 
           {added && (
             <p className="mt-3 text-xs text-sage" role="status">
@@ -266,38 +295,83 @@ export default function ProductDetail({
 
           <ul className="mt-8 space-y-2 border-t border-line pt-6 text-xs text-muted">
             <li>Free shipping on orders over $150</li>
-            <li>30-day returns, no questions</li>
-            <li>Guest checkout — no account needed</li>
+            <li>Free 30-day returns</li>
+            <li>Secure checkout — no account needed</li>
           </ul>
+
+          <ShareRow name={product.name} />
         </div>
       </div>
 
-      {/* Try-on */}
-      <section id="try-on" className="mt-16 scroll-mt-24">
-        <TryOnPanel product={product} />
-      </section>
-
-      {/* Reviews */}
-      <section className="mt-16 border-t border-line pt-12">
-        <div className="flex flex-wrap items-baseline justify-between gap-3">
-          <h2 className="font-serif text-2xl text-ink">
-            Reviews <span className="text-muted">({product.reviews.length})</span>
-          </h2>
-          <Rating value={product.rating} count={product.reviews.length} size="md" />
+      {/* Description / Reviews tabs */}
+      <section className="mt-16 border-t border-line pt-10">
+        <div className="flex gap-1 border-b border-line" role="tablist">
+          {(
+            [
+              ["description", "Description"],
+              ["reviews", `Reviews (${product.reviews.length})`],
+            ] as const
+          ).map(([key, label]) => (
+            <button
+              key={key}
+              role="tab"
+              aria-selected={tab === key}
+              onClick={() => setTab(key)}
+              className={`-mb-px border-b-2 px-4 py-3 text-sm transition-colors ${
+                tab === key
+                  ? "border-brass text-ink"
+                  : "border-transparent text-muted hover:text-ink"
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
 
-        <div className="mt-8 grid gap-5 md:grid-cols-2">
-          {product.reviews.map((r) => (
-            <article key={r.id} className="rounded-xl border border-line bg-surface p-5">
-              <Rating value={r.rating} />
-              <p className="mt-3 text-sm leading-relaxed text-ink">{r.body}</p>
-              <footer className="mt-4 flex items-center gap-2 text-xs text-faint">
-                <span className="font-medium text-muted">{r.author}</span>
-                {r.verified && <span className="text-sage">Verified buyer</span>}
-                <span>&middot; {shortDate(r.date)}</span>
-              </footer>
-            </article>
-          ))}
+        <div className="pt-8">
+          {tab === "description" ? (
+            <div className="grid gap-8 md:grid-cols-2">
+              <div>
+                <h3 className="font-serif text-xl text-ink">About this piece</h3>
+                <p className="mt-3 text-sm leading-relaxed text-muted">{product.description}</p>
+              </div>
+              <div>
+                <h3 className="font-serif text-xl text-ink">Details</h3>
+                <dl className="mt-3 space-y-2 text-sm">
+                  <div className="flex justify-between border-b border-line pb-2">
+                    <dt className="text-muted">Material</dt>
+                    <dd className="text-ink">{product.material}</dd>
+                  </div>
+                  <div className="flex justify-between border-b border-line pb-2">
+                    <dt className="text-muted">Category</dt>
+                    <dd className="text-ink">{product.category}</dd>
+                  </div>
+                  <div className="flex justify-between border-b border-line pb-2">
+                    <dt className="text-muted">Colourways</dt>
+                    <dd className="text-ink">{product.colors.map((c) => c.name).join(", ")}</dd>
+                  </div>
+                  <div className="flex justify-between">
+                    <dt className="text-muted">Sizes</dt>
+                    <dd className="text-ink">{product.sizes.join(", ")}</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
+          ) : (
+            <div className="grid gap-5 md:grid-cols-2">
+              {product.reviews.map((r) => (
+                <article key={r.id} className="rounded-xl border border-line bg-surface p-5">
+                  <Rating value={r.rating} />
+                  <p className="mt-3 text-sm leading-relaxed text-ink">{r.body}</p>
+                  <footer className="mt-4 flex flex-wrap items-center gap-2 text-xs text-faint">
+                    <span className="font-medium text-muted">{r.author}</span>
+                    {r.verified && <span className="text-sage">Verified buyer</span>}
+                    <span>&middot; {shortDate(r.date)}</span>
+                  </footer>
+                </article>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

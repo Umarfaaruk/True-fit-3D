@@ -10,10 +10,11 @@ const NAV = [
   { href: "/shop", label: "Shop" },
   { href: "/fitting-room", label: "Fitting Room" },
   { href: "/orders", label: "Track Order" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 export default function Header() {
-  const { cartCount, wishlist, theme, toggleTheme, hydrated } = useStore();
+  const { cartCount, wishlist, theme, toggleTheme, hydrated, setPaletteOpen } = useStore();
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -54,19 +55,18 @@ export default function Header() {
           ))}
         </nav>
 
-        <form onSubmit={submitSearch} className="ml-auto hidden max-w-xs flex-1 lg:block">
-          <label className="sr-only" htmlFor="site-search">
-            Search products
-          </label>
-          <input
-            id="site-search"
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search the wardrobe"
-            className="field py-2"
-          />
-        </form>
+        <button
+          type="button"
+          onClick={() => setPaletteOpen(true)}
+          className="ml-auto hidden max-w-xs flex-1 items-center gap-2 rounded-lg border border-line bg-surface px-3 py-2 text-left text-sm text-faint transition-colors hover:border-brass lg:flex"
+        >
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+            <circle cx="11" cy="11" r="6.5" />
+            <path d="M16 16l4.5 4.5" strokeLinecap="round" />
+          </svg>
+          <span className="flex-1">Search the wardrobe</span>
+          <kbd className="rounded border border-line px-1.5 py-0.5 text-[10px]">Ctrl K</kbd>
+        </button>
 
         <div className="ml-auto flex items-center gap-1 lg:ml-0">
           <button

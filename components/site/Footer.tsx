@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { categories } from "@/lib/products";
+import Newsletter from "./Newsletter";
 
 export default function Footer() {
   return (
@@ -51,12 +52,27 @@ export default function Footer() {
         </div>
 
         <div>
-          <p className="label mb-3">The Promise</p>
-          <ul className="space-y-2 text-sm text-muted">
-            <li>Free shipping over $150</li>
-            <li>30-day returns</li>
-            <li>Secure checkout</li>
+          <p className="label mb-3">Help</p>
+          <ul className="space-y-2 text-sm">
+            <li>
+              <Link href="/faq" className="text-muted transition-colors hover:text-brass">
+                FAQ
+              </Link>
+            </li>
+            <li>
+              <Link href="/contact" className="text-muted transition-colors hover:text-brass">
+                Contact
+              </Link>
+            </li>
+            <li className="pt-1 text-muted">Free shipping over $150</li>
+            <li className="text-muted">30-day returns</li>
           </ul>
+        </div>
+      </div>
+
+      <div className="border-t border-line">
+        <div className="shell max-w-md py-10">
+          <Newsletter />
         </div>
       </div>
 

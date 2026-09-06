@@ -107,6 +107,18 @@ interface StoreValue {
 
   theme: Theme;
   toggleTheme: () => void;
+
+  /* Fitting room — a drawer, not a page, so it lives in global state. */
+  fittingOpen: boolean;
+  wornProductId: string | null;
+  openFittingRoom: (productId?: string) => void;
+  closeFittingRoom: () => void;
+  wearProduct: (productId: string) => void;
+  clearWorn: () => void;
+
+  /* Command palette (Ctrl/Cmd+K) */
+  paletteOpen: boolean;
+  setPaletteOpen: (open: boolean) => void;
 }
 
 const StoreContext = createContext<StoreValue | null>(null);
@@ -117,6 +129,9 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   const [wishlist, setWishlist] = useState<string[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
   const [theme, setTheme] = useState<Theme>("dark");
+  const [fittingOpen, setFittingOpen] = useState(false);
+  const [wornProductId, setWornProductId] = useState<string | null>(null);
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   // Load persisted state after mount so server and client markup match.
   useEffect(() => {
@@ -236,6 +251,20 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     setTheme((t) => (t === "dark" ? "light" : "dark"));
   }, []);
 
+  const openFittingRoom = useCallback((productId?: string) => {
+    if (productId) setWornProductId(productId);
+    setFittingOpen(true);
+  }, []);
+
+  const closeFittingRoom = useCallback(() => setFittingOpen(false), []);
+
+  const wearProduct = useCallback((productId: string) => {
+    setWornProductId(productId);
+    setFittingOpen(true);
+  }, []);
+
+  const clearWorn = useCallback(() => setWornProductId(null), []);
+
   const value: StoreValue = {
     hydrated,
     cart,
@@ -255,6 +284,14 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     findOrder,
     theme,
     toggleTheme,
+    fittingOpen,
+    wornProductId,
+    openFittingRoom,
+    closeFittingRoom,
+    wearProduct,
+    clearWorn,
+    paletteOpen,
+    setPaletteOpen,
   };
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
