@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { collections, products } from "@/lib/products";
-import ProductImage from "@/components/product/ProductImage";
+import ProductPhoto from "@/components/product/ProductPhoto";
 
 export default function Collections() {
   return (
@@ -32,10 +32,10 @@ export default function Collections() {
             >
               <div className="relative aspect-[5/4] overflow-hidden bg-raised">
                 {hero && (
-                  <ProductImage
-                    category={hero.category}
-                    color={hero.colors[0].hex}
-                    className="h-full w-full transition-transform duration-500 group-hover:scale-105"
+                  <ProductPhoto
+                    product={hero}
+                    sizes="(min-width: 768px) 30vw, 100vw"
+                    className="transition-transform duration-500 group-hover:scale-105"
                   />
                 )}
                 <span className="absolute left-4 top-4 font-serif text-3xl text-brass/80">

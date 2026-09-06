@@ -63,12 +63,19 @@ export default function TryOnPanel({ product }: { product: Product | null }) {
     try {
       const person = await fileToBase64(photoFile);
 
+      // Sending the garment photo gives a much better composite than describing
+      // it, but a blocked or failed fetch should degrade to text, not error out.
       let garmentImageBase64: string | undefined;
       let garmentMimeType: string | undefined;
       if (product.imageUrl) {
-        const g = await urlToBase64(product.imageUrl);
-        garmentImageBase64 = g.base64;
-        garmentMimeType = g.mimeType;
+        try {
+          const g = await urlToBase64(product.imageUrl);
+          garmentImageBase64 = g.base64;
+          garmentMimeType = g.mimeType;
+        } catch {
+          garmentImageBase64 = undefined;
+          garmentMimeType = undefined;
+        }
       }
 
       const resp = await fetch("/api/tryon", {

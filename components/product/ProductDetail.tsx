@@ -8,6 +8,7 @@ import { useStore } from "@/lib/store";
 import { useMeasurements } from "@/lib/useMeasurements";
 import { recommendSize } from "@/lib/sizing";
 import ProductImage from "./ProductImage";
+import ProductPhoto from "./ProductPhoto";
 import ProductCard from "./ProductCard";
 import Rating from "./Rating";
 import TryOnPanel from "@/components/tryon/TryOnPanel";
@@ -64,25 +65,34 @@ export default function ProductDetail({
       <div className="mt-8 grid gap-12 lg:grid-cols-2">
         {/* Gallery */}
         <div>
-          <div className="overflow-hidden rounded-xl border border-line bg-raised">
-            <ProductImage category={product.category} color={color.hex} className="h-full w-full" />
+          <div className="relative aspect-[4/5] overflow-hidden rounded-xl border border-line bg-raised">
+            <ProductPhoto
+              product={product}
+              color={color.hex}
+              sizes="(min-width: 1024px) 45vw, 100vw"
+              priority
+            />
           </div>
-          <div className="mt-3 flex gap-3">
-            {product.colors.map((c) => (
-              <button
-                key={c.name}
-                type="button"
-                onClick={() => setColor(c)}
-                aria-label={`View in ${c.name}`}
-                aria-pressed={c.name === color.name}
-                className={`h-20 w-16 overflow-hidden rounded-lg border-2 transition-colors ${
-                  c.name === color.name ? "border-brass" : "border-line hover:border-brass/50"
-                }`}
-              >
-                <ProductImage category={product.category} color={c.hex} className="h-full w-full" />
-              </button>
-            ))}
-          </div>
+
+          {/* Without photography, the tinted silhouette previews each colourway. */}
+          {!product.imageUrl && (
+            <div className="mt-3 flex gap-3">
+              {product.colors.map((c) => (
+                <button
+                  key={c.name}
+                  type="button"
+                  onClick={() => setColor(c)}
+                  aria-label={`View in ${c.name}`}
+                  aria-pressed={c.name === color.name}
+                  className={`h-20 w-16 overflow-hidden rounded-lg border-2 transition-colors ${
+                    c.name === color.name ? "border-brass" : "border-line hover:border-brass/50"
+                  }`}
+                >
+                  <ProductImage category={product.category} color={c.hex} className="h-full w-full" />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Buy box */}

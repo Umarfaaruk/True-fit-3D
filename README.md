@@ -30,6 +30,25 @@ This is a front-end demonstration. There is **no backend or database**:
 Adding real persistence and payments would mean a database and a payment
 processor (Stripe or similar) — neither is wired up here.
 
+## Product imagery
+
+Product photos are hotlinked from [Unsplash](https://unsplash.com), which the
+[Unsplash License](https://unsplash.com/license) permits for commercial use
+without attribution, and whose CDN is intended to be linked directly. They are
+served through `next/image` (see `images.remotePatterns` in `next.config.mjs`).
+
+Two things to know before this goes anywhere near production:
+
+- **One photo per product.** Colour swatches select the variant that goes into
+  the cart, but do not change the image — per-colour shots need a real shoot.
+  Products without an `imageUrl` fall back to a generated silhouette.
+- **Stock photos are not your products.** Replace `imageUrl` in
+  `lib/products.ts` with your own photography before selling anything.
+
+Populating `imageUrl` also improves try-on: the garment photo is sent to Gemini
+alongside the shopper's photo instead of a text description. If that image fetch
+fails, try-on falls back to the text description rather than erroring.
+
 ## API keys
 
 The storefront itself needs **no API keys and no environment variables.**

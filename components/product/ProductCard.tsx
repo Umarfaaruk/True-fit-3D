@@ -4,7 +4,7 @@ import Link from "next/link";
 import { activePrice, type Product } from "@/lib/products";
 import { money } from "@/lib/format";
 import { useStore } from "@/lib/store";
-import ProductImage from "./ProductImage";
+import ProductPhoto from "./ProductPhoto";
 import Rating from "./Rating";
 
 export default function ProductCard({ product }: { product: Product }) {
@@ -19,10 +19,10 @@ export default function ProductCard({ product }: { product: Product }) {
         className="block overflow-hidden rounded-xl border border-line bg-surface transition-colors hover:border-brass/60"
       >
         <div className="relative aspect-[4/5] overflow-hidden bg-raised">
-          <ProductImage
-            category={product.category}
-            color={product.colors[0].hex}
-            className="h-full w-full transition-transform duration-500 group-hover:scale-[1.04]"
+          <ProductPhoto
+            product={product}
+            sizes="(min-width: 1280px) 20vw, (min-width: 640px) 30vw, 45vw"
+            className="transition-transform duration-500 group-hover:scale-[1.04]"
           />
           {product.badge && (
             <span className="absolute left-3 top-3 rounded-full bg-brass px-2.5 py-1 text-[10px] font-medium uppercase tracking-label text-onBrass">

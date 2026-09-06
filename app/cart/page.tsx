@@ -4,7 +4,7 @@ import Link from "next/link";
 import { activePrice, getProduct } from "@/lib/products";
 import { money } from "@/lib/format";
 import { FREE_SHIPPING_THRESHOLD, useStore } from "@/lib/store";
-import ProductImage from "@/components/product/ProductImage";
+import ProductPhoto from "@/components/product/ProductPhoto";
 
 export default function CartPage() {
   const { cart, setQty, removeLine, subtotal, shipping, total, hydrated, cartCount } = useStore();
@@ -53,13 +53,9 @@ export default function CartPage() {
               <li key={`${line.productId}-${line.size}-${line.color}`} className="flex gap-4 py-6">
                 <Link
                   href={`/product/${product.id}`}
-                  className="h-28 w-24 shrink-0 overflow-hidden rounded-lg border border-line bg-raised"
+                  className="relative h-28 w-24 shrink-0 overflow-hidden rounded-lg border border-line bg-raised"
                 >
-                  <ProductImage
-                    category={product.category}
-                    color={swatch.hex}
-                    className="h-full w-full"
-                  />
+                  <ProductPhoto product={product} color={swatch.hex} sizes="96px" />
                 </Link>
 
                 <div className="flex flex-1 flex-col">

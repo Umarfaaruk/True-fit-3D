@@ -1,5 +1,13 @@
 import Link from "next/link";
-import ProductImage from "@/components/product/ProductImage";
+import { getProduct } from "@/lib/products";
+import ProductPhoto from "@/components/product/ProductPhoto";
+
+/** Three pieces fanned out behind the headline. */
+const SHOWCASE = [
+  { id: "oxford", position: "left-0 top-10 w-52 rotate-[-6deg]" },
+  { id: "trench", position: "right-6 top-0 w-60 rotate-[5deg]" },
+  { id: "jeans", position: "bottom-0 left-1/2 w-56 -translate-x-1/2 rotate-[-2deg]" },
+];
 
 export default function Hero() {
   return (
@@ -50,15 +58,18 @@ export default function Hero() {
         </div>
 
         <div className="relative hidden h-[520px] lg:block" aria-hidden="true">
-          <div className="absolute left-4 top-8 w-56 rotate-[-6deg] overflow-hidden rounded-2xl border border-line shadow-2xl shadow-black/20">
-            <ProductImage category="Tops" color="#E4DCCB" className="h-full w-full" />
-          </div>
-          <div className="absolute right-10 top-0 w-64 rotate-[5deg] overflow-hidden rounded-2xl border border-line shadow-2xl shadow-black/25">
-            <ProductImage category="Outerwear" color="#B08857" className="h-full w-full" />
-          </div>
-          <div className="absolute bottom-0 left-1/2 w-60 -translate-x-1/2 rotate-[-2deg] overflow-hidden rounded-2xl border border-line shadow-2xl shadow-black/25">
-            <ProductImage category="Bottoms" color="#2E3B55" className="h-full w-full" />
-          </div>
+          {SHOWCASE.map((s) => {
+            const product = getProduct(s.id);
+            if (!product) return null;
+            return (
+              <div
+                key={s.id}
+                className={`absolute aspect-[4/5] overflow-hidden rounded-2xl border border-line shadow-2xl shadow-black/25 ${s.position}`}
+              >
+                <ProductPhoto product={product} sizes="260px" priority />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
