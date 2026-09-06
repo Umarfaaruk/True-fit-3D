@@ -1,8 +1,8 @@
 "use client";
 
-import { Measurements } from "@/lib/types";
+import type { Measurements } from "@/lib/types";
 
-const fields: { key: keyof Measurements; label: string; min: number; max: number }[] = [
+const FIELDS: { key: keyof Measurements; label: string; min: number; max: number }[] = [
   { key: "height", label: "Stature (height)", min: 150, max: 200 },
   { key: "chest", label: "Chest / bust circumference", min: 70, max: 130 },
   { key: "waist", label: "Waist circumference", min: 55, max: 120 },
@@ -19,20 +19,23 @@ export default function MeasurementSliders({
   onChange: (m: Measurements) => void;
 }) {
   return (
-    <div className="space-y-4">
-      {fields.map((f) => (
+    <div className="space-y-5">
+      {FIELDS.map((f) => (
         <div key={f.key}>
           <div className="flex items-baseline justify-between">
-            <label className="text-sm text-parchment/70">{f.label}</label>
-            <span className="font-serif text-sm text-brass-400">{values[f.key]} cm</span>
+            <label htmlFor={`m-${f.key}`} className="text-sm text-muted">
+              {f.label}
+            </label>
+            <span className="font-serif text-sm text-brass">{values[f.key]} cm</span>
           </div>
           <input
+            id={`m-${f.key}`}
             type="range"
             min={f.min}
             max={f.max}
             value={values[f.key]}
             onChange={(e) => onChange({ ...values, [f.key]: Number(e.target.value) })}
-            className="mt-1.5 w-full accent-brass"
+            className="mt-2 w-full accent-brass"
           />
         </div>
       ))}

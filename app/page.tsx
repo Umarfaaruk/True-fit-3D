@@ -1,55 +1,62 @@
-"use client";
+import Link from "next/link";
+import Hero from "@/components/home/Hero";
+import TrustMarquee from "@/components/home/TrustMarquee";
+import Collections from "@/components/home/Collections";
+import PromoBanner from "@/components/home/PromoBanner";
+import Testimonials from "@/components/home/Testimonials";
+import ProductCard from "@/components/product/ProductCard";
+import { products } from "@/lib/products";
 
-import { useState } from "react";
-import GarmentCatalog from "@/components/GarmentCatalog";
-import FittingRoomPanel from "@/components/FittingRoomPanel";
-import { Garment } from "@/lib/garments";
-
-export default function Home() {
-  const [active, setActive] = useState<Record<string, Garment>>({});
-  const [selectedGarment, setSelectedGarment] = useState<Garment | null>(null);
-
-  function handleSelect(g: Garment) {
-    setSelectedGarment(g);
-    setActive((prev) => {
-      const next = { ...prev };
-      if (next[g.layer]?.id === g.id) {
-        delete next[g.layer];
-      } else {
-        next[g.layer] = g;
-      }
-      return next;
-    });
-  }
-
-  function handleRemove(layer: string) {
-    setActive((prev) => {
-      const next = { ...prev };
-      delete next[layer];
-      return next;
-    });
-  }
+export default function HomePage() {
+  const featured = products.slice(0, 8);
 
   return (
-    <main className="grain flex h-screen flex-col bg-ink-950">
-      <header className="flex items-center justify-between border-b border-ink-800 px-8 py-4">
-        <div className="flex items-baseline gap-3">
-          <h1 className="font-serif text-xl tracking-tight text-parchment">TrueFit3D</h1>
-          <span className="rounded-full border border-brass/40 px-2.5 py-0.5 text-[10px] uppercase tracking-wide text-brass-400">
-            The Fitting Room
-          </span>
-        </div>
-        <p className="text-xs text-parchment/40">Measurement-driven sizing, photoreal try-on</p>
-      </header>
+    <>
+      <Hero />
+      <TrustMarquee />
 
-      <div className="grid flex-1 grid-cols-5 overflow-hidden">
-        <div className="col-span-2 overflow-hidden border-r border-ink-800">
-          <GarmentCatalog active={Object.fromEntries(Object.entries(active).map(([k, v]) => [k, v.id]))} onSelect={handleSelect} />
+      <section className="shell py-20">
+        <div className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="label">New arrivals</p>
+            <h2 className="mt-3 font-serif text-4xl leading-tight tracking-tight text-ink sm:text-5xl">
+              Just landed.
+            </h2>
+          </div>
+          <Link href="/shop" className="btn-secondary">
+            Shop all 16
+          </Link>
         </div>
-        <div className="col-span-3 overflow-hidden">
-          <FittingRoomPanel active={active} selectedGarment={selectedGarment} onRemoveLayer={handleRemove} />
+
+        <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-6 lg:grid-cols-4">
+          {featured.map((p) => (
+            <ProductCard key={p.id} product={p} />
+          ))}
         </div>
-      </div>
-    </main>
+      </section>
+
+      <Collections />
+      <PromoBanner />
+      <Testimonials />
+
+      <section className="shell py-24 text-center">
+        <p className="label">Discover more</p>
+        <h2 className="mx-auto mt-4 max-w-2xl font-serif text-4xl leading-tight tracking-tight text-ink sm:text-5xl">
+          Stop guessing your size.
+        </h2>
+        <p className="mx-auto mt-4 max-w-lg text-sm leading-relaxed text-muted">
+          Set your measurements once in the Fitting Room. Every product page then tells you which
+          size to take — and you can see it on your own photo before you commit.
+        </p>
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <Link href="/fitting-room" className="btn-primary">
+            Open the Fitting Room
+          </Link>
+          <Link href="/shop" className="btn-secondary">
+            Browse the wardrobe
+          </Link>
+        </div>
+      </section>
+    </>
   );
 }

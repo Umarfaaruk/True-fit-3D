@@ -15,3 +15,5 @@ export const defaultMeasurements: Measurements = {
   shoulderWidth: 43,
   inseam: 82,
 };
+
+export const MEASUREMENTS_KEY = "truefit3d_measurements";

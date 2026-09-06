@@ -2,24 +2,100 @@
 @tailwind components;
 @tailwind utilities;
 
-* {
-  scrollbar-color: theme(colors.ink.600) transparent;
+@layer base {
+  /* Light theme (default). Values are space-separated RGB for <alpha-value>. */
+  :root {
+    --canvas: 247 245 240;
+    --surface: 255 255 255;
+    --raised: 240 237 230;
+    --line: 219 214 203;
+    --ink: 26 28 33;
+    --muted: 92 96 106;
+    --faint: 141 145 155;
+    --brass: 155 118 42;
+    --brass-soft: 201 162 75;
+    --sage: 74 116 96;
+    --danger: 176 58 46;
+    --on-brass: 255 252 245;
+  }
+
+  .dark {
+    --canvas: 13 15 20;
+    --surface: 18 21 28;
+    --raised: 26 30 40;
+    --line: 45 51 65;
+    --ink: 237 231 217;
+    --muted: 160 160 158;
+    --faint: 116 120 132;
+    --brass: 201 162 75;
+    --brass-soft: 220 193 120;
+    --sage: 127 168 148;
+    --danger: 232 118 106;
+    --on-brass: 13 15 20;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background-color: rgb(var(--canvas));
+    color: rgb(var(--ink));
+  }
+
+  * {
+    scrollbar-color: rgb(var(--line)) transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid rgb(var(--brass));
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
 }
 
-:focus-visible {
-  outline: 2px solid theme(colors.brass.DEFAULT);
-  outline-offset: 2px;
-}
+@layer components {
+  .shell {
+    @apply mx-auto w-full max-w-shell px-5 sm:px-8;
+  }
 
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+  .label {
+    @apply text-[10px] font-medium uppercase tracking-label text-faint;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-6 py-3 text-sm font-medium transition-colors disabled:cursor-not-allowed disabled:opacity-40;
+  }
+
+  .btn-primary {
+    @apply btn bg-brass text-onBrass hover:bg-brass-soft;
+  }
+
+  .btn-secondary {
+    @apply btn border border-line text-ink hover:border-brass hover:text-brass;
+  }
+
+  .card {
+    @apply rounded-xl border border-line bg-surface;
+  }
+
+  .field {
+    @apply w-full rounded-lg border border-line bg-surface px-3 py-2.5 text-sm text-ink outline-none transition-colors placeholder:text-faint focus:border-brass;
   }
 }
 
 .grain {
-  background-image: radial-gradient(circle at 1px 1px, rgba(237,231,217,0.035) 1px, transparent 0);
+  background-image: radial-gradient(circle at 1px 1px, rgb(var(--ink) / 0.045) 1px, transparent 0);
   background-size: 3px 3px;
 }
