@@ -1,0 +1,25 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  scrollbar-color: theme(colors.ink.600) transparent;
+}
+
+:focus-visible {
+  outline: 2px solid theme(colors.brass.DEFAULT);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.grain {
+  background-image: radial-gradient(circle at 1px 1px, rgba(237,231,217,0.035) 1px, transparent 0);
+  background-size: 3px 3px;
+}
